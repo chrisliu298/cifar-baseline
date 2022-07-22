@@ -86,7 +86,10 @@ class Model(pl.LightningModule):
             )
         elif self.config.optimizer == "sgd":
             opt = optim.SGD(
-                self.parameters(), lr=self.config.lr, weight_decay=self.config.wd
+                self.parameters(),
+                lr=self.config.lr,
+                momentum=0.9,
+                weight_decay=self.config.wd,
             )
         elif self.config.optimizer == "adam":
             opt = optim.Adam(
