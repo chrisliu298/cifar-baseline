@@ -73,6 +73,13 @@ def main():
         benchmark=True,
         logger=logger,
     )
+    wandb.log(
+        {
+            "train_size": len(datamodule.train_dataset),
+            "val_size": len(datamodule.val_dataset),
+            "test_size": len(datamodule.test_dataset),
+        }
+    )
     trainer.fit(model=model, datamodule=datamodule)
     trainer.test(model=model, datamodule=datamodule)
     wandb.finish(quiet=True)
