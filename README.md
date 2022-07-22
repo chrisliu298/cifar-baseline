@@ -14,6 +14,7 @@ I train several models as baseline on [CIFAR-10 and CIFAR-100](https://www.cs.to
          0.3
       ],
       "wd":[
+         0,
          0.0003,
          0.001,
          0.003
@@ -28,6 +29,7 @@ I train several models as baseline on [CIFAR-10 and CIFAR-100](https://www.cs.to
          1e-2
       ],
       "wd":[
+         0,
          0.1,
          0.3,
          1,
