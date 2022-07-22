@@ -17,36 +17,36 @@ class ImageDataModule(LightningDataModule):
         self.config = config
         self.num_workers = int(os.cpu_count() / 2)
         # define transforms
-        self.train_transforms = []
-        self.test_transforms = []
+        self.transforms_train = []
+        self.transforms_test = []
         base_transfroms = [
             transforms.ToTensor(),
             transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
         ]
         if self.config.data_augmentation:
-            self.train_transforms.append(transforms.RandomCrop(32, padding=4))
-            self.train_transforms.append(transforms.RandomHorizontalFlip())
-        self.train_transforms.extend(base_transfroms)
-        self.test_transforms.extend(base_transfroms)
+            self.transforms_train.append(transforms.RandomCrop(32, padding=4))
+            self.transforms_train.append(transforms.RandomHorizontalFlip())
+        self.transforms_train.extend(base_transfroms)
+        self.transforms_test.extend(base_transfroms)
 
         # download data
         self.train_dataset = DATASETS[self.config.dataset](
             "/tmp/data",
             train=True,
             download=True,
-            transform=transforms.Compose(self.train_transforms),
+            transform=transforms.Compose(self.transforms_train),
         )
         self.val_dataset = DATASETS[self.config.dataset](
             "/tmp/data",
             train=True,
             download=True,
-            transform=transforms.Compose(self.test_transforms),
+            transform=transforms.Compose(self.transforms_test),
         )
         self.test_dataset = DATASETS[self.config.dataset](
             "/tmp/data",
             train=False,
             download=True,
-            transform=transforms.Compose(self.test_transforms),
+            transform=transforms.Compose(self.transforms_test),
         )
         self.split_data()
 
