@@ -13,8 +13,8 @@ from pytorch_lightning.callbacks import (
 )
 from pytorch_lightning.loggers import WandbLogger
 
-from data import ImageDataModule, DATASETS
-from model import Model, MODELS
+from data import DATASETS, ImageDataModule
+from model import MODELS, Model
 
 
 def main():
