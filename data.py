@@ -50,7 +50,7 @@ class ImageDataModule(LightningDataModule):
         )
         self.split_data()
 
-    def split_data(self, val_size=0.1):
+    def split_data(self, val_size=0.2):
         indices = np.arange(len(self.train_dataset))
         train_idx, val_idx = train_test_split(
             indices,
