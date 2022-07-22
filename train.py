@@ -24,7 +24,7 @@ from model import Model, MODELS
 def main():
     # parse command line arguments
     parser = argparse.ArgumentParser()
-    parser.add_argument("--project_id", type=str, default="cifar")
+    parser.add_argument("--project_id", type=str, default="cifar10-resnet18")
     # data
     parser.add_argument("--data_augmentation", action="store_true")
     # training
