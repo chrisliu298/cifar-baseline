@@ -16,9 +16,9 @@ from pytorch_lightning.loggers import WandbLogger
 from data import ImageDataModule, DATASETS
 from model import Model, MODELS
 
-os.environ["WANDB_SILENT"] = "True"
-warnings.filterwarnings("ignore")
-logging.getLogger("pytorch_lightning").setLevel(logging.ERROR)
+# os.environ["WANDB_SILENT"] = "True"
+# warnings.filterwarnings("ignore")
+# logging.getLogger("pytorch_lightning").setLevel(logging.ERROR)
 
 
 def main():
@@ -50,7 +50,7 @@ def main():
     datamodule = ImageDataModule(config)
     model = Model(config)
     callbacks = [
-        TQDMProgressBar(refresh_rate=0),
+        # TQDMProgressBar(refresh_rate=0),
         ModelCheckpoint(
             filename="{epoch}_{avg_val_acc}",
             monitor="avg_val_acc",
