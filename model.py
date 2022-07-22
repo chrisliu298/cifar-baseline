@@ -52,12 +52,8 @@ class Model(pl.LightningModule):
     def training_epoch_end(self, outputs):
         acc = torch.stack([i["train_acc"] for i in outputs]).mean()
         loss = torch.stack([i["loss"] for i in outputs]).mean()
-        self.log("avg_train_acc", acc, logger=True)
+        self.log("avg_train_acc", acc, logger=True, prog_bar=True)
         self.log("avg_train_loss", loss, logger=True)
-        # decay lr
-        # sch = self.lr_schedulers()
-        # if self.current_epoch + 1 in sch.milestones:
-        #     sch.step()
 
     def validation_step(self, batch, batch_idx):
         loss, acc = self.evaluate(batch, "val")
@@ -66,7 +62,7 @@ class Model(pl.LightningModule):
     def validation_epoch_end(self, outputs):
         acc = torch.stack([i["val_acc"] for i in outputs]).mean()
         loss = torch.stack([i["val_loss"] for i in outputs]).mean()
-        self.log("avg_val_acc", acc, logger=True)
+        self.log("avg_val_acc", acc, logger=True, prog_bar=True)
         self.log("avg_val_loss", loss, logger=True)
 
     def test_step(self, batch, batch_idx):
@@ -76,7 +72,7 @@ class Model(pl.LightningModule):
     def test_epoch_end(self, outputs):
         acc = torch.stack([i["test_acc"] for i in outputs]).mean()
         loss = torch.stack([i["test_loss"] for i in outputs]).mean()
-        self.log("avg_test_acc", acc, logger=True)
+        self.log("avg_test_acc", acc, logger=True, prog_bar=True)
         self.log("avg_test_loss", loss, logger=True)
 
     def configure_optimizers(self):
