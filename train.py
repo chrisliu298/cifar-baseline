@@ -16,10 +16,6 @@ from pytorch_lightning.loggers import WandbLogger
 from data import ImageDataModule, DATASETS
 from model import Model, MODELS
 
-# os.environ["WANDB_SILENT"] = "True"
-# warnings.filterwarnings("ignore")
-# logging.getLogger("pytorch_lightning").setLevel(logging.ERROR)
-
 
 def main():
     # parse command line arguments
@@ -38,8 +34,13 @@ def main():
     # experiment
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--wandb", action="store_true")
+    parser.add_argument("--verbose", action="store_true")
     config = EasyDict(vars(parser.parse_args()))
     seed_everything(config.seed)  # set seed for reproducibility
+    if not config.verbose:
+        os.environ["WANDB_SILENT"] = "True"
+        warnings.filterwarnings("ignore")
+        logging.getLogger("pytorch_lightning").setLevel(logging.ERROR)
     # assign additional args
     config.dataset = config.project_id.split("-")[0]
     config.model = config.project_id.split("-")[1]
@@ -50,7 +51,6 @@ def main():
     datamodule = ImageDataModule(config)
     model = Model(config)
     callbacks = [
-        # TQDMProgressBar(refresh_rate=0),
         ModelCheckpoint(
             filename="{epoch}_{avg_val_acc}",
             monitor="avg_val_acc",
@@ -59,6 +59,8 @@ def main():
         ),
         LearningRateMonitor(logging_interval="epoch"),
     ]
+    if not config.verbose:
+        callbacks.append(TQDMProgressBar(refresh_rate=0))
     logger = WandbLogger(
         offline=not config.wandb,
         project=config.project_id,
@@ -81,7 +83,7 @@ def main():
         }
     )
     trainer.fit(model=model, datamodule=datamodule)
-    trainer.test(model=model, datamodule=datamodule)
+    trainer.test(model=model, datamodule=datamodule, verbose=config.verbose)
     wandb.finish(quiet=True)
 
 
