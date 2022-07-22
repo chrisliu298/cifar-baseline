@@ -41,8 +41,8 @@ def main():
     config = EasyDict(vars(parser.parse_args()))
     seed_everything(config.seed)  # set seed for reproducibility
     # assign additional args
-    config.dataset = config.project_id.split("_")[0]
-    config.model = config.project_id.split("_")[1]
+    config.dataset = config.project_id.split("-")[0]
+    config.model = config.project_id.split("-")[1]
     assert config.dataset in DATASETS, f"{config.dataset} not in {DATASETS.keys()}"
     assert config.model in MODELS, f"{config.model} not in {MODELS.keys()}"
     config.output_size = 10 if config.dataset == "cifar10" else 100
