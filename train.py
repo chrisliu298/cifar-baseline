@@ -44,8 +44,10 @@ def main():
     # assign additional args
     config.dataset = config.project_id.split("-")[0]
     config.model = config.project_id.split("-")[1]
-    assert config.dataset in DATASETS, f"{config.dataset} not in {DATASETS.keys()}"
-    assert config.model in MODELS, f"{config.model} not in {MODELS.keys()}"
+    assert (
+        config.dataset in DATASETS.keys()
+    ), f"{config.dataset} not in {DATASETS.keys()}"
+    assert config.model in MODELS.keys(), f"{config.model} not in {MODELS.keys()}"
     config.output_size = 10 if config.dataset == "cifar10" else 100
     # setup data module, model, and trainer
     datamodule = ImageDataModule(config)
