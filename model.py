@@ -55,8 +55,9 @@ class Model(pl.LightningModule):
         self.log("avg_train_acc", acc, logger=True)
         self.log("avg_train_loss", loss, logger=True)
         # decay lr
-        sch = self.lr_schedulers()
-        sch.step()
+        # sch = self.lr_schedulers()
+        # if self.current_epoch + 1 in sch.milestones:
+        #     sch.step()
 
     def validation_step(self, batch, batch_idx):
         loss, acc = self.evaluate(batch, "val")
