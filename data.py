@@ -15,7 +15,7 @@ class ImageDataModule(LightningDataModule):
     def __init__(self, config):
         super().__init__()
         self.config = config
-        self.num_workers = int(os.cpu_count() / 2)
+        self.num_workers = os.cpu_count()
         # calculate mean and std
         train_dataset = DATASETS[self.config.dataset](
             "/tmp/data", train=True, download=True
