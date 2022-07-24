@@ -16,13 +16,16 @@ class ImageDataModule(LightningDataModule):
         super().__init__()
         self.config = config
         self.num_workers = int(os.cpu_count() / 2)
+        # calculate mean and std
+        train_dataset = DATASETS[self.config.dataset](
+            "/tmp/data", train=True, download=True
+        )
+        means = (np.mean(train_dataset.data, axis=(0, 1, 2)) / 255.0).round(4).tolist()
+        stds = (np.std(train_dataset.data, axis=(0, 1, 2)) / 255.0).round(4).tolist()
         # define transforms
         self.transforms_train = []
         self.transforms_test = []
-        base_transfroms = [
-            transforms.ToTensor(),
-            transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
-        ]
+        base_transfroms = [transforms.ToTensor(), transforms.Normalize(means, stds)]
         if self.config.data_augmentation:
             self.transforms_train.append(transforms.RandomCrop(32, padding=4))
             self.transforms_train.append(transforms.RandomHorizontalFlip())
