@@ -63,9 +63,9 @@ class ImageDataModule(LightningDataModule):
         )
         tmp_train_dataset = deepcopy(self.train_dataset)
         tmp_val_dataset = deepcopy(self.val_dataset)
-        self.train_dataset.data = [tmp_train_dataset.data[i] for i in train_idx]
+        self.train_dataset.data = tmp_train_dataset.data[train_idx]
         self.train_dataset.targets = [tmp_train_dataset.targets[i] for i in train_idx]
-        self.val_dataset.data = [tmp_val_dataset.data[i] for i in val_idx]
+        self.val_dataset.data = tmp_val_dataset.data[val_idx]
         self.val_dataset.targets = [tmp_val_dataset.targets[i] for i in val_idx]
         del tmp_train_dataset, tmp_val_dataset
 
