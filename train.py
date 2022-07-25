@@ -2,6 +2,7 @@ import argparse
 import logging
 import os
 import warnings
+from datetime import datetime
 
 import wandb
 from easydict import EasyDict
@@ -12,6 +13,7 @@ from pytorch_lightning.callbacks import (
     TQDMProgressBar,
 )
 from pytorch_lightning.loggers import WandbLogger
+from pytorch_lightning.profiler import SimpleProfiler
 
 from data import DATASETS, ImageDataModule
 from model import MODELS, Model
@@ -76,6 +78,10 @@ def main():
         check_val_every_n_epoch=1,
         benchmark=True,
         logger=logger,
+        profiler=SimpleProfiler(
+            filename=config.project_id
+            + "-{}".format(str(datetime.now().strftime("%Y%m%d%H%M%S")))
+        ),
     )
     wandb.log(
         {
