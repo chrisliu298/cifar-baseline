@@ -22,7 +22,7 @@ from model import MODELS, Model
 def main():
     # parse command line arguments
     parser = argparse.ArgumentParser()
-    parser.add_argument("--project_id", type=str, default="cifar10-resnet18")
+    parser.add_argument("--project_id", type=str, default="baseline-cifar10-resnet18")
     # data
     parser.add_argument("--data_augmentation", action="store_true")
     parser.add_argument("--subsample_size", type=int, default=None)
@@ -45,8 +45,8 @@ def main():
         warnings.filterwarnings("ignore")
         logging.getLogger("pytorch_lightning").setLevel(logging.ERROR)
     # assign additional args
-    config.dataset = config.project_id.split("-")[0]
-    config.model = config.project_id.split("-")[1]
+    config.dataset = config.project_id.split("-")[1]
+    config.model = config.project_id.split("-")[2]
     assert (
         config.dataset in DATASETS.keys()
     ), f"{config.dataset} not in {DATASETS.keys()}"
