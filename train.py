@@ -25,6 +25,7 @@ def main():
     parser.add_argument("--project_id", type=str, default="cifar10-resnet18")
     # data
     parser.add_argument("--data_augmentation", action="store_true")
+    parser.add_argument("--subsample_size", type=int, default=None)
     # training
     parser.add_argument(
         "--optimizer", type=str, default="adamw", choices=["adamw", "adam", "sgd"]

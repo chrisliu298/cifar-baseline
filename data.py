@@ -61,6 +61,13 @@ class ImageDataModule(LightningDataModule):
             random_state=self.config.seed,
             shuffle=True,
         )
+        if self.config.subsample_size:
+            train_idx, _ = train_test_split(
+                train_idx,
+                train_size=self.config.subsample_size,
+                random_state=self.config.seed,
+                shuffle=True,
+            )
         tmp_train_dataset = deepcopy(self.train_dataset)
         tmp_val_dataset = deepcopy(self.val_dataset)
         self.train_dataset.data = tmp_train_dataset.data[train_idx]
