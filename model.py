@@ -1,7 +1,7 @@
-import pytorch_lightning as pl
 import torch
 import torch.nn.functional as F
 import torch.optim as optim
+from pytorch_lightning import LightningModule
 from torchinfo import summary
 from torchmetrics.functional import accuracy
 
@@ -15,7 +15,7 @@ MODELS = {
 }
 
 
-class Model(pl.LightningModule):
+class Model(LightningModule):
     def __init__(self, config):
         super().__init__()
         self.save_hyperparameters()
@@ -78,18 +78,18 @@ class Model(pl.LightningModule):
     def configure_optimizers(self):
         if self.config.optimizer == "adamw":
             opt = optim.AdamW(
-                self.parameters(), lr=self.config.lr, weight_decay=self.config.wd
+                self.model.parameters(), lr=self.config.lr, weight_decay=self.config.wd
             )
         elif self.config.optimizer == "sgd":
             opt = optim.SGD(
-                self.parameters(),
+                self.model.parameters(),
                 lr=self.config.lr,
                 momentum=0.9,
                 weight_decay=self.config.wd,
             )
         elif self.config.optimizer == "adam":
             opt = optim.Adam(
-                self.parameters(), lr=self.config.lr, weight_decay=self.config.wd
+                self.model.parameters(), lr=self.config.lr, weight_decay=self.config.wd
             )
         sch = optim.lr_scheduler.MultiStepLR(opt, milestones=[60, 120, 160], gamma=0.2)
         return {
