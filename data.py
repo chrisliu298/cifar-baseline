@@ -58,9 +58,9 @@ class ImageDataModule(LightningDataModule):
 
     def split_data(self, val_size=0.2):
         indices = np.arange(len(self.train_dataset))
-        if self.config.subsample_size:
+        if self.config.subset_size:
             indices, _ = train_test_split(
-                indices, train_size=self.config.subsample_size, shuffle=True
+                indices, train_size=self.config.subset_size, shuffle=True
             )
         train_idx, val_idx = train_test_split(indices, test_size=val_size, shuffle=True)
         tmp_train_dataset = deepcopy(self.train_dataset)
