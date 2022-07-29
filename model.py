@@ -10,7 +10,15 @@ from models import *
 MODELS = {
     "simplecnn": SimpleCNN5,
     "resnet18": ResNet18,
+    "resnet34": ResNet34,
+    "resnet50": ResNet50,
+    "resnet101": ResNet101,
+    "resnet152": ResNet152,
     "preactresnet18": PreActResNet18,
+    "preactresnet34": PreActResNet34,
+    "preactresnet50": PreActResNet50,
+    "preactresnet101": PreActResNet101,
+    "preactresnet152": PreActResNet152,
     "wideresnet": WideResNet,
 }
 
