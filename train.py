@@ -43,8 +43,7 @@ def main():
         warnings.filterwarnings("ignore")
         logging.getLogger("pytorch_lightning").setLevel(logging.ERROR)
     # assign additional args
-    config.dataset = config.project_id.split("-")[1]
-    config.model = config.project_id.split("-")[2]
+    _, config.dataset, config.model, *_ = config.project_id.split("-")
     assert (
         config.dataset in DATASETS.keys()
     ), f"{config.dataset} not in {DATASETS.keys()}"
