@@ -1,10 +1,10 @@
 import os
-from copy import deepcopy
+from copy import deepcopy as c
 
 import numpy as np
 from pytorch_lightning import LightningDataModule
 from sklearn.model_selection import train_test_split
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, Subset
 from torchvision import transforms
 from torchvision.datasets import CIFAR10, CIFAR100
 
@@ -63,13 +63,10 @@ class ImageDataModule(LightningDataModule):
                 indices, train_size=self.config.subset_size, shuffle=True
             )
         train_idx, val_idx = train_test_split(indices, test_size=val_size, shuffle=True)
-        tmp_train_dataset = deepcopy(self.train_dataset)
-        tmp_val_dataset = deepcopy(self.val_dataset)
-        self.train_dataset.data = tmp_train_dataset.data[train_idx]
-        self.train_dataset.targets = [tmp_train_dataset.targets[i] for i in train_idx]
-        self.val_dataset.data = tmp_val_dataset.data[val_idx]
-        self.val_dataset.targets = [tmp_val_dataset.targets[i] for i in val_idx]
-        del tmp_train_dataset, tmp_val_dataset
+        tmp_train_dataset = c(self.train_dataset)
+        tmp_val_dataset = c(self.val_dataset)
+        self.train_dataset = Subset(tmp_train_dataset, train_idx)
+        self.val_dataset = Subset(tmp_val_dataset, val_idx)
 
     def train_dataloader(self):
         return DataLoader(
