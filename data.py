@@ -32,6 +32,7 @@ class ImageDataModule(LightningDataModule):
         self.transforms_train.extend(base_transfroms)
         self.transforms_test.extend(base_transfroms)
 
+    def prepare_data(self):
         # download data
         self.train_dataset = DATASETS[self.config.dataset](
             "/tmp/data",
@@ -51,6 +52,8 @@ class ImageDataModule(LightningDataModule):
             download=True,
             transform=transforms.Compose(self.transforms_test),
         )
+
+    def setup(self, stage=None):
         self.split_data()
 
     def split_data(self, val_size=0.2):

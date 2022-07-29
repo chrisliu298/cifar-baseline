@@ -51,6 +51,8 @@ def main():
     config.output_size = 10 if config.dataset == "cifar10" else 100
     # setup data module, model, and trainer
     datamodule = ImageDataModule(config)
+    datamodule.prepare_data()
+    datamodule.setup()
     model = Model(config)
     callbacks = [
         ModelCheckpoint(
