@@ -47,11 +47,11 @@ class Model(LightningModule):
     def on_train_start(self):
         # Log model parameters
         model_info = summary(self.model, input_size=(1, 3, 32, 32), verbose=0)
-        self.log(
-            "params",
-            torch.tensor(model_info.total_params, dtype=torch.float32),
-            logger=True,
-        )
+        self.log("params", float(model_info.total_params), logger=True)
+        datamodule = self.trainer.datamodule
+        self.log("train_size", len(datamodule.train_dataset), logger=True)
+        self.log("val_size", len(datamodule.val_dataset), logger=True)
+        self.log("test_size", len(datamodule.test_dataset), logger=True)
 
     def training_step(self, batch, batch_idx):
         loss, acc = self.evaluate(batch, "train")
