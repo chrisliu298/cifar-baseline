@@ -49,9 +49,9 @@ class Model(LightningModule):
         model_info = summary(self.model, input_size=(1, 3, 32, 32), verbose=0)
         self.log("params", float(model_info.total_params), logger=True)
         datamodule = self.trainer.datamodule
-        self.log("train_size", len(datamodule.train_dataset), logger=True)
-        self.log("val_size", len(datamodule.val_dataset), logger=True)
-        self.log("test_size", len(datamodule.test_dataset), logger=True)
+        self.log("train_size", float(len(datamodule.train_dataset)), logger=True)
+        self.log("val_size", float(len(datamodule.val_dataset)), logger=True)
+        self.log("test_size", float(len(datamodule.test_dataset)), logger=True)
 
     def training_step(self, batch, batch_idx):
         loss, acc = self.evaluate(batch, "train")
