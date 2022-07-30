@@ -20,8 +20,15 @@ from model import MODELS, Model
 def main():
     # parse command line arguments
     parser = argparse.ArgumentParser()
-    parser.add_argument("--project_id", type=str, default="baseline-cifar10-resnet18")
+    parser.add_argument("--project_id", type=str, default="baseline-cifar10")
+    # model
+    parser.add_argument(
+        "--model", type=str, default="resnet18", choices=list(MODELS.keys())
+    )
     # data
+    parser.add_argument(
+        "--dataset", type=str, default="cifar10", choices=list(DATASETS.keys())
+    )
     parser.add_argument("--data_augmentation", action="store_true")
     parser.add_argument("--subset_size", type=int, default=None)
     # training
@@ -43,11 +50,6 @@ def main():
         warnings.filterwarnings("ignore")
         logging.getLogger("pytorch_lightning").setLevel(logging.ERROR)
     # assign additional args
-    _, config.dataset, config.model, *_ = config.project_id.split("-")
-    assert (
-        config.dataset in DATASETS.keys()
-    ), f"{config.dataset} not in {DATASETS.keys()}"
-    assert config.model in MODELS.keys(), f"{config.model} not in {MODELS.keys()}"
     config.output_size = 10 if config.dataset == "cifar10" else 100
     # setup data module, model, and trainer
     datamodule = ImageDataModule(config)
