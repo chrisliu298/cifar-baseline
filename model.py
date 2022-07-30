@@ -49,9 +49,10 @@ class Model(LightningModule):
         return loss, acc
 
     def on_train_start(self):
-        # Log model parameters
+        # log model parameters
         model_info = summary(self.model, input_size=(1, 3, 32, 32), verbose=0)
         self.log("params", float(model_info.total_params), logger=True)
+        # log data split sizes
         datamodule = self.trainer.datamodule
         self.log("train_size", float(len(datamodule.train_dataset)), logger=True)
         self.log("val_size", float(len(datamodule.val_dataset)), logger=True)
@@ -103,7 +104,7 @@ class Model(LightningModule):
             opt = optim.Adam(
                 self.model.parameters(), lr=self.config.lr, weight_decay=self.config.wd
             )
-        sch = optim.lr_scheduler.MultiStepLR(opt, milestones=[60, 120, 160], gamma=0.2)
+        sch = optim.lr_scheduler.MultiStepLR(opt, milestones=[30, 60], gamma=0.2)
         return {
             "optimizer": opt,
             "lr_scheduler": {"scheduler": sch, "interval": "epoch", "frequency": 1},
