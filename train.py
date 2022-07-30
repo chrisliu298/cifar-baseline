@@ -44,14 +44,15 @@ def main():
     parser.add_argument("--wandb", action="store_true")
     parser.add_argument("--verbose", action="store_true")
     config = EasyDict(vars(parser.parse_args()))
+    # assign additional args
+    config.output_size = 10 if config.dataset == "cifar10" else 100
     # set seed for reproducibility
     seed_everything(config.seed)
+    # show nothing in stdout
     if not config.verbose:
         os.environ["WANDB_SILENT"] = "True"
         warnings.filterwarnings("ignore")
         logging.getLogger("pytorch_lightning").setLevel(logging.ERROR)
-    # assign additional args
-    config.output_size = 10 if config.dataset == "cifar10" else 100
     # setup data module, model, and trainer
     datamodule = ImageDataModule(config)
     datamodule.prepare_data()
