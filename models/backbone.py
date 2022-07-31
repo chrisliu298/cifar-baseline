@@ -1,35 +1,43 @@
 import torch.nn as nn
 
 
+class BasicBlock(nn.Module):
+    def __init__(self, in_channels, out_channels, block_idx):
+        super().__init__()
+        assert block_idx <= 3
+        self.conv = nn.Conv2d(in_channels, out_channels, kernel_size=3, padding=1)
+        self.bn = nn.BatchNorm2d(out_channels)
+        self.relu = nn.ReLU()
+        if block_idx == 0:
+            self.maxpool = nn.Identity()
+        if block_idx < 3:
+            self.maxpool = nn.MaxPool2d(2)
+        if block_idx == 3:
+            self.maxpool = nn.AdaptiveMaxPool2d((1, 1))
+
+    def forward(self, x):
+        return self.maxpool(self.relu(self.bn(self.conv(x))))
+
+
 class CNNBackbone(nn.Module):
     def __init__(self, num_classes=10):
         super().__init__()
-        self.hidden_size = 64
+        self.channels = [3, 64, 128, 256, 512]
         self.num_classes = num_classes
-        layers = [
-            nn.Conv2d(3, self.hidden_size, kernel_size=3, padding=1),
-            nn.BatchNorm2d(self.hidden_size),
-            nn.ReLU(),
-        ]
-        for i in range(3):
-            layers.extend(
-                [
-                    nn.Conv2d(
-                        self.hidden_size * (2**i),
-                        self.hidden_size * (2 ** (i + 1)),
-                        kernel_size=3,
-                        padding=1,
-                    ),
-                    nn.BatchNorm2d(self.hidden_size * (2 ** (i + 1))),
-                    nn.ReLU(),
-                    nn.MaxPool2d(2) if i < 2 else nn.AdaptiveAvgPool2d((1, 1)),
-                ]
-            )
-        layers.extend([nn.Flatten(), nn.Linear(self.hidden_size * 8, self.num_classes)])
-        self.net = nn.Sequential(*layers)
+        self.layer0 = BasicBlock(self.channels[0], self.channels[1], block_idx=0)
+        self.layer1 = BasicBlock(self.channels[1], self.channels[2], block_idx=1)
+        self.layer2 = BasicBlock(self.channels[2], self.channels[3], block_idx=2)
+        self.layer3 = BasicBlock(self.channels[3], self.channels[4], block_idx=3)
+        self.fc = nn.Linear(self.channels[-1], self.num_classes)
 
     def forward(self, x):
-        return self.net(x)
+        out = self.layer0(x)
+        out = self.layer1(out)
+        out = self.layer2(out)
+        out = self.layer3(out)
+        out = out.view(out.size(0), -1)
+        out = self.fc(out)
+        return out
 
 
 def Backbone(num_classes=10):
