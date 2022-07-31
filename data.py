@@ -44,12 +44,12 @@ class ImageDataModule(LightningDataModule):
         train_dataset = DATASETS[self.config.dataset](
             "/tmp/data",
             train=True,
-            transforms=transforms.Compose(self.transforms_train),
+            transform=transforms.Compose(self.transforms_train),
         )
         val_dataset = DATASETS[self.config.dataset](
             "/tmp/data",
             train=True,
-            transforms=transforms.Compose(self.transforms_test),
+            transform=transforms.Compose(self.transforms_test),
         )
         # split into train and val sets
         indices = np.arange(len(train_dataset))
@@ -64,7 +64,7 @@ class ImageDataModule(LightningDataModule):
         self.test_dataset = DATASETS[self.config.dataset](
             "/tmp/data",
             train=False,
-            transforms=transforms.Compose(self.transforms_test),
+            transform=transforms.Compose(self.transforms_test),
         )
 
     def train_dataloader(self):
