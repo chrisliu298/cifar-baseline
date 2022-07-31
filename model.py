@@ -140,8 +140,8 @@ class Model(LightningModule):
         )
         decay = sorted(list(decay))
         no_decay = sorted(list(no_decay))
-        print("Decay:", decay)
-        print("No decay:", no_decay)
+        # print("Decay:", decay)
+        # print("No decay:", no_decay)
         return [
             {
                 "params": [param_dict[pn] for pn in decay],
