@@ -108,8 +108,8 @@ class Model(LightningModule):
         """
         decay = set()
         no_decay = set()
-        whitelist_weight_modules = (nn.Conv2d, nn.Linear)
-        blacklist_weight_modules = (nn.BatchNorm2d,)
+        whitelist_weight_modules = (nn.Conv2d, nn.Linear, nn.BatchNorm2d)
+        blacklist_weight_modules = ()
         for module_name, module in model.named_modules():
             for param_name, _ in module.named_parameters():
                 if len(module_name) == 0:
