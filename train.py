@@ -55,8 +55,6 @@ def main():
         logging.getLogger("pytorch_lightning").setLevel(logging.ERROR)
     # setup data module, model, and trainer
     datamodule = ImageDataModule(config)
-    datamodule.prepare_data()
-    datamodule.setup()
     model = Model(config)
     callbacks = []
     callbacks.append(
