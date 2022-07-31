@@ -1,4 +1,4 @@
-from .backbone_cnn import *
+from .backbone import *
 from .preact_resnet import *
 from .resnet import *
 from .resnext import *

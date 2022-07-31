@@ -1,7 +1,7 @@
 import torch.nn as nn
 
 
-class BackboneCNN(nn.Module):
+class Backbone(nn.Module):
     def __init__(self, num_classes=10):
         super().__init__()
         self.hidden_size = 64
@@ -32,5 +32,5 @@ class BackboneCNN(nn.Module):
         return self.net(x)
 
 
-def BackboneCNN(num_classes=10):
-    return BackboneCNN(num_classes)
+def Backbone(num_classes=10):
+    return Backbone(num_classes)
