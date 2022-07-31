@@ -138,15 +138,14 @@ class Model(LightningModule):
         ), "parameters %s were not separated into either decay/no_decay set!" % (
             str(param_dict.keys() - union_params),
         )
+        decay = sorted(list(decay))
+        no_decay = sorted(list(no_decay))
         print("Decay:", decay)
         print("No decay:", no_decay)
         return [
             {
-                "params": [param_dict[pn] for pn in sorted(list(decay))],
+                "params": [param_dict[pn] for pn in decay],
                 "weight_decay": self.config.wd,
             },
-            {
-                "params": [param_dict[pn] for pn in sorted(list(no_decay))],
-                "weight_decay": 0.0,
-            },
+            {"params": [param_dict[pn] for pn in no_decay], "weight_decay": 0.0},
         ]
