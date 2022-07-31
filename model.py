@@ -89,23 +89,64 @@ class Model(LightningModule):
         self.log("avg_test_loss", loss, logger=True)
 
     def configure_optimizers(self):
+        param_groups = self.configure_parameter_groups(self.model)
         if self.config.optimizer == "adamw":
-            opt = optim.AdamW(
-                self.model.parameters(), lr=self.config.lr, weight_decay=self.config.wd
-            )
+            opt = optim.AdamW(param_groups, lr=self.config.lr)
         elif self.config.optimizer == "sgd":
-            opt = optim.SGD(
-                self.model.parameters(),
-                lr=self.config.lr,
-                momentum=0.9,
-                weight_decay=self.config.wd,
-            )
+            opt = optim.SGD(param_groups, lr=self.config.lr, momentum=0.9)
         elif self.config.optimizer == "adam":
-            opt = optim.Adam(
-                self.model.parameters(), lr=self.config.lr, weight_decay=self.config.wd
-            )
+            opt = optim.Adam(param_groups, lr=self.config.lr)
         sch = optim.lr_scheduler.MultiStepLR(opt, milestones=[30, 60], gamma=0.2)
         return {
             "optimizer": opt,
             "lr_scheduler": {"scheduler": sch, "interval": "epoch", "frequency": 1},
         }
+
+    def configure_parameter_groups(self, model):
+        """
+        Code adapted from https://github.com/karpathy/minGPT/blob/master/mingpt/model.py
+        """
+        decay = set()
+        no_decay = set()
+        whitelist_weight_modules = (nn.Conv2d, nn.Linear)
+        blacklist_weight_modules = (nn.BatchNorm2d,)
+        for module_name, module in model.named_modules():
+            for param_name, _ in module.named_parameters():
+                if len(module_name) == 0:
+                    continue
+                name = f"{module_name}.{param_name}"
+                if name.endswith("bias"):
+                    no_decay.add(name)
+                elif name.endswith("weight") and isinstance(
+                    module, whitelist_weight_modules
+                ):
+                    decay.add(name)
+                elif name.endswith("weight") and isinstance(
+                    module, blacklist_weight_modules
+                ):
+                    no_decay.add(name)
+        param_dict = {
+            param_name: param for param_name, param in model.named_parameters()
+        }
+        inter_params = decay & no_decay
+        union_params = decay | no_decay
+        assert (
+            len(inter_params) == 0
+        ), "parameters %s made it into both decay/no_decay sets!" % (str(inter_params),)
+        assert (
+            len(param_dict.keys() - union_params) == 0
+        ), "parameters %s were not separated into either decay/no_decay set!" % (
+            str(param_dict.keys() - union_params),
+        )
+        print("Decay:", decay)
+        print("No decay:", no_decay)
+        return [
+            {
+                "params": [param_dict[pn] for pn in sorted(list(decay))],
+                "weight_decay": self.config.wd,
+            },
+            {
+                "params": [param_dict[pn] for pn in sorted(list(no_decay))],
+                "weight_decay": 0.0,
+            },
+        ]
