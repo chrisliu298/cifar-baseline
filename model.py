@@ -8,7 +8,7 @@ from torchmetrics.functional import accuracy
 from models import *
 
 MODELS = {
-    "backbone-cnn": Backbone,
+    "backbone": Backbone,
     "resnet18": ResNet18,
     "resnet34": ResNet34,
     "resnet50": ResNet50,
