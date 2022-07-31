@@ -1,4 +1,4 @@
-# cifar-baseline
+# CIFAR-10/100 Baseline
 
 This repository contains code to train CNN architectures on [CIFAR-10 and CIFAR-100](https://www.cs.toronto.edu/~kriz/cifar.html) using [PyTorch Lightning](https://www.pytorchlightning.ai/).
 
