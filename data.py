@@ -1,3 +1,4 @@
+from audioop import add
 import os
 
 import numpy as np
@@ -57,13 +58,19 @@ class ImageDataModule(LightningDataModule):
             train=False,
             transform=transforms.Compose(self.transforms_test),
         )
-        if self.config.label_noise > 0:
-            train_dataset.targets = self.corrupt_labels(
-                train_dataset.targets, self.config.label_noise
+        # add label noise
+        if self.config.label_noise_level:
+            label_noise = (
+                self.symmetric_label_noise
+                if self.config.label_noise_type == "s"
+                else self.asymmetric_label_noise
+            )
+            train_dataset.targets = label_noise(
+                train_dataset.targets, self.config.label_noise_level
             )
             val_dataset.targets = train_dataset.targets
-            self.test_dataset.targets = self.corrupt_labels(
-                self.test_dataset.targets, self.config.label_noise
+            self.test_dataset.targets = label_noise(
+                self.test_dataset.targets, self.config.label_noise_level
             )
         # split into train and val sets
         indices = np.arange(len(train_dataset))
@@ -76,14 +83,38 @@ class ImageDataModule(LightningDataModule):
         self.train_dataset = Subset(train_dataset, train_idx)
         self.val_dataset = Subset(val_dataset, val_idx)
 
-    def corrupt_labels(self, labels, corrupt_prob):
+    def symmetric_label_noise(self, labels, noise_level):
         true_labels = labels
         labels = np.array(labels)
-        mask = np.random.rand(len(labels)) < corrupt_prob
+        # indices for noisy labels
+        mask = np.random.rand(len(labels)) < noise_level
+        # generate random labels
         random_labels = np.random.choice(self.config.num_classes, mask.sum())
         labels[mask] = random_labels
+        # convert back to original labels format
         labels = [int(x) for x in labels]
         print("Label noise: {}".format(accuracy_score(true_labels, labels)))
+        return labels
+
+    def asymmetric_label_noise(self, labels, noise_level):
+        label_mapping = {
+            9: 1,  # truck (9) -> automobile (1)
+            2: 0,  # bird (2) -> airplane (0)
+            3: 5,  # cat (3) -> dog (5)
+            5: 3,  # dot (5) -> cat (3)
+            4: 7,  # deer (4) -> horse (7)
+        }
+        true_labels = labels
+        labels = np.array(labels)
+        # indices for noisy labels
+        mask_idx = np.where(np.random.rand(len(labels)) < noise_level)[0]
+        # generate random labels
+        for idx in mask_idx:
+            if labels[idx] in label_mapping:
+                labels[idx] = label_mapping[labels[idx]]
+        # convert back to original labels format
+        labels = [int(i) for i in labels]
+        print("Accuracy:", accuracy_score(true_labels, labels))
         return labels
 
     def train_dataloader(self):
