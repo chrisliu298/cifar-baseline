@@ -2,6 +2,7 @@ import os
 
 import numpy as np
 from pytorch_lightning import LightningDataModule
+from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
 from torch.utils.data import DataLoader, Subset
 from torchvision import transforms
@@ -51,6 +52,19 @@ class ImageDataModule(LightningDataModule):
             train=True,
             transform=transforms.Compose(self.transforms_test),
         )
+        self.test_dataset = DATASETS[self.config.dataset](
+            "/tmp/data",
+            train=False,
+            transform=transforms.Compose(self.transforms_test),
+        )
+        if self.config.label_noise > 0:
+            train_dataset.targets = self.corrupt_labels(
+                train_dataset.targets, self.config.label_noise
+            )
+            val_dataset.targets = train_dataset.targets
+            self.test_dataset.targets = self.corrupt_labels(
+                self.test_dataset.targets, self.config.label_noise
+            )
         # split into train and val sets
         indices = np.arange(len(train_dataset))
         # take a subset of the full training set if needed
@@ -61,11 +75,16 @@ class ImageDataModule(LightningDataModule):
         train_idx, val_idx = train_test_split(indices, test_size=0.2, shuffle=True)
         self.train_dataset = Subset(train_dataset, train_idx)
         self.val_dataset = Subset(val_dataset, val_idx)
-        self.test_dataset = DATASETS[self.config.dataset](
-            "/tmp/data",
-            train=False,
-            transform=transforms.Compose(self.transforms_test),
-        )
+
+    def corrupt_labels(self, labels, corrupt_prob):
+        true_labels = labels
+        labels = np.array(labels)
+        mask = np.random.rand(len(labels)) < corrupt_prob
+        random_labels = np.random.choice(self.config.output_size, mask.sum())
+        labels[mask] = random_labels
+        labels = [int(x) for x in labels]
+        print("Label noise: {}".format(accuracy_score(true_labels, labels)))
+        return labels
 
     def train_dataloader(self):
         return DataLoader(
