@@ -60,6 +60,7 @@ class ImageDataModule(LightningDataModule):
         )
         # add label noise
         if self.config.label_noise_level:
+            assert self.config.label_noise_type in ["a", "s"]
             label_noise = (
                 self.symmetric_label_noise
                 if self.config.label_noise_type == "s"
