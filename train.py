@@ -80,6 +80,7 @@ def main():
             entity="chrisliu298",
             config=config,
         ),
+        profiler="simple",
     )
     trainer.fit(model=model, datamodule=datamodule)
     trainer.test(model=model, datamodule=datamodule, verbose=config.verbose)
