@@ -80,7 +80,7 @@ class ImageDataModule(LightningDataModule):
         true_labels = labels
         labels = np.array(labels)
         mask = np.random.rand(len(labels)) < corrupt_prob
-        random_labels = np.random.choice(self.config.output_size, mask.sum())
+        random_labels = np.random.choice(self.config.num_classes, mask.sum())
         labels[mask] = random_labels
         labels = [int(x) for x in labels]
         print("Label noise: {}".format(accuracy_score(true_labels, labels)))

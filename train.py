@@ -46,7 +46,7 @@ def main():
     parser.add_argument("--verbose", action="store_true")
     config = EasyDict(vars(parser.parse_args()))
     # assign additional args
-    config.output_size = 10 if config.dataset == "cifar10" else 100
+    config.num_classes = 10 if config.dataset == "cifar10" else 100
     # set seed for reproducibility
     seed_everything(config.seed)
     # show nothing in stdout

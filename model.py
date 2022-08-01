@@ -32,7 +32,7 @@ class Model(LightningModule):
         super().__init__()
         self.save_hyperparameters()
         self.config = config
-        self.model = MODELS[self.config.model](num_classes=self.config.output_size)
+        self.model = MODELS[self.config.model](num_classes=self.config.num_classes)
 
     def forward(self, x):
         self.model(x)
