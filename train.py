@@ -56,13 +56,18 @@ def main():
     torch.cuda.manual_seed(config.seed)
     # assign additional args
     config.num_classes = 10 if config.dataset == "cifar10" else 100
-    if config.lr != None and config.wd != None:
-        if "adam" in config.optimizer:
-            config.lr = float(loguniform.rvs(1e-4, 1e-2))
-            config.wd = float(loguniform.rvs(1e-4, 1))
-        else:
-            config.lr = float(loguniform.rvs(1e-3, 1e-1))
-            config.wd = float(loguniform.rvs(1e-6, 1e-2))
+    if config.lr == None:
+        config.lr = float(
+            loguniform.rvs(1e-4, 1e-2)
+            if "adam" in config.optimizer
+            else loguniform.rvs(1e-3, 1e-1)
+        )
+    if config.wd == None:
+        config.wd = float(
+            loguniform.rvs(1e-4, 1)
+            if "adam" in config.optimizer
+            else float(loguniform.rvs(1e-6, 1e-2))
+        )
     # show nothing in stdout
     if not config.verbose:
         os.environ["WANDB_SILENT"] = "True"
