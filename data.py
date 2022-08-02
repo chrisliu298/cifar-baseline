@@ -82,9 +82,9 @@ class ImageDataModule(LightningDataModule):
                 train_dataset.targets, self.config.label_noise_level
             )
             val_dataset.targets = train_dataset.targets
-            self.test_dataset.targets = label_noise(
-                self.test_dataset.targets, self.config.label_noise_level
-            )
+            # self.test_dataset.targets = label_noise(
+            #     self.test_dataset.targets, self.config.label_noise_level
+            # )
         # split into train and val sets
         indices = np.arange(len(train_dataset))
         # take a subset of the full training set if needed
