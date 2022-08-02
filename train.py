@@ -66,7 +66,7 @@ def main():
         config.wd = float(
             loguniform.rvs(1e-4, 1)
             if "adam" in config.optimizer
-            else float(loguniform.rvs(1e-6, 1e-2))
+            else loguniform.rvs(1e-6, 1e-2)
         )
     # show nothing in stdout
     if not config.verbose:
