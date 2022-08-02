@@ -2,8 +2,10 @@ import argparse
 import json
 import logging
 import os
+import random
 import warnings
 
+import torch
 import wandb
 from easydict import EasyDict
 from pytorch_lightning import Trainer, seed_everything
@@ -48,6 +50,10 @@ def main():
     parser.add_argument("--wandb", action="store_true")
     parser.add_argument("--verbose", action="store_true")
     config = EasyDict(vars(parser.parse_args()))
+    # set seed
+    random.seed(config.seed)
+    torch.manual_seed(config.seed)
+    torch.cuda.manual_seed(config.seed)
     # assign additional args
     config.num_classes = 10 if config.dataset == "cifar10" else 100
     config.lr = (
@@ -66,8 +72,6 @@ def main():
         )
         or config.wd
     )
-    # set seed for reproducibility
-    seed_everything(config.seed)
     # show nothing in stdout
     if not config.verbose:
         os.environ["WANDB_SILENT"] = "True"
