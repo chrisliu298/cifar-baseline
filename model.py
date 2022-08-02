@@ -68,6 +68,7 @@ class Model(LightningModule):
         loss = torch.stack([i["loss"] for i in outputs]).mean()
         self.log("avg_train_acc", acc, logger=True, prog_bar=True)
         self.log("avg_train_loss", loss, logger=True)
+        self.current_epoch_train_acc = acc
 
     def validation_step(self, batch, batch_idx):
         loss, acc = self.evaluate(batch, "val")
