@@ -26,8 +26,6 @@ def temp_seed(seed):
 class ImageDataModule(LightningDataModule):
     def __init__(self, config):
         super().__init__()
-        global seed
-        seed = config.seed
         self.config = config
         self.num_workers = os.cpu_count()
         # calculate mean and std
@@ -55,7 +53,7 @@ class ImageDataModule(LightningDataModule):
         DATASETS[self.config.dataset]("/tmp/data", train=True, download=True)
         DATASETS[self.config.dataset]("/tmp/data", train=False, download=True)
 
-    @temp_seed(seed)
+    @temp_seed(42)
     def setup(self, stage=None):
         train_dataset = DATASETS[self.config.dataset](
             "/tmp/data",
