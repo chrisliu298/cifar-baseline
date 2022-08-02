@@ -55,7 +55,7 @@ def main():
     random.seed(config.seed)
     torch.manual_seed(config.seed)
     torch.cuda.manual_seed(config.seed)
-    # assign additional args
+    # conditional args
     config.num_classes = 10 if config.dataset == "cifar10" else 100
     if config.sample_hparams:
         assert config.lr == None
