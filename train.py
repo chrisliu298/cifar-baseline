@@ -58,9 +58,9 @@ def main():
         )
     if config.wd == None:
         config.wd = float(
-            loguniform.rvs(0, 1)
+            loguniform.rvs(1e-4, 1)
             if "adam" in config.optimizer
-            else loguniform.rvs(0, 1e-3)
+            else loguniform.rvs(1e-4, 1e-3)
         )
     # set seed for reproducibility
     seed_everything(config.seed)
