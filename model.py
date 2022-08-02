@@ -33,6 +33,7 @@ class Model(LightningModule):
         self.save_hyperparameters()
         self.config = config
         self.model = MODELS[self.config.model](num_classes=self.config.num_classes)
+        self.current_epoch_train_acc = None
 
     def forward(self, x):
         self.model(x)
@@ -77,6 +78,12 @@ class Model(LightningModule):
         loss = torch.stack([i["val_loss"] for i in outputs]).mean()
         self.log("avg_val_acc", acc, logger=True, prog_bar=True)
         self.log("avg_val_loss", loss, logger=True)
+        try:
+            self.log(
+                "generalization_gap", self.current_epoch_train_acc - acc, logger=True
+            )
+        except:
+            pass
 
     def test_step(self, batch, batch_idx):
         loss, acc = self.evaluate(batch, "test")
