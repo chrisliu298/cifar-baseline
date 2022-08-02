@@ -68,7 +68,7 @@ def main():
         float(
             loguniform.rvs(1e-4, 1)
             if "adam" in config.optimizer
-            else loguniform.rvs(1e-4, 1e-3)
+            else loguniform.rvs(1e-5, 1e-2)
         )
         or config.wd
     )
