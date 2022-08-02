@@ -1,3 +1,4 @@
+import contextlib
 import os
 
 import numpy as np
@@ -11,9 +12,22 @@ from torchvision.datasets import CIFAR10, CIFAR100
 DATASETS = {"cifar10": CIFAR10, "cifar100": CIFAR100}
 
 
+@contextlib.contextmanager
+def temp_seed(seed):
+    """Used a a context manager to temporarily set the seed of the random number generator."""
+    state = np.random.get_state()
+    np.random.seed(seed)
+    try:
+        yield
+    finally:
+        np.random.set_state(state)
+
+
 class ImageDataModule(LightningDataModule):
     def __init__(self, config):
         super().__init__()
+        global seed
+        seed = config.seed
         self.config = config
         self.num_workers = os.cpu_count()
         # calculate mean and std
@@ -41,6 +55,7 @@ class ImageDataModule(LightningDataModule):
         DATASETS[self.config.dataset]("/tmp/data", train=True, download=True)
         DATASETS[self.config.dataset]("/tmp/data", train=False, download=True)
 
+    @temp_seed(seed)
     def setup(self, stage=None):
         train_dataset = DATASETS[self.config.dataset](
             "/tmp/data",
