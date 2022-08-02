@@ -1,4 +1,5 @@
 import argparse
+import json
 import logging
 import os
 import warnings
@@ -68,6 +69,8 @@ def main():
         os.environ["WANDB_SILENT"] = "True"
         warnings.filterwarnings("ignore")
         logging.getLogger("pytorch_lightning").setLevel(logging.ERROR)
+    else:
+        print(json.dumps(config, indent=4, sort_keys=True))
     # setup data module, model, and trainer
     datamodule = ImageDataModule(config)
     model = Model(config)
