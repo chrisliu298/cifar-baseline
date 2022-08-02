@@ -12,6 +12,7 @@ from pytorch_lightning.callbacks import (
     TQDMProgressBar,
 )
 from pytorch_lightning.loggers import WandbLogger
+from scipy.stats import loguniform
 
 from data import DATASETS, ImageDataModule
 from model import MODELS, Model
@@ -39,8 +40,8 @@ def main():
     )
     parser.add_argument("--batch_size", type=int, default=128)
     parser.add_argument("--max_epochs", type=int, default=200)
-    parser.add_argument("--lr", type=float, default=3e-4)
-    parser.add_argument("--wd", type=float, default=0.0)
+    parser.add_argument("--lr", type=float)
+    parser.add_argument("--wd", type=float)
     # experiment
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--wandb", action="store_true")
@@ -48,6 +49,18 @@ def main():
     config = EasyDict(vars(parser.parse_args()))
     # assign additional args
     config.num_classes = 10 if config.dataset == "cifar10" else 100
+    if config.lr == None:
+        config.lr = float(
+            loguniform.rvs(1e-4, 1e-2)
+            if "adam" in config.optimizer
+            else loguniform.rvs(1e-3, 1e-1)
+        )
+    if config.wd == None:
+        config.wd = float(
+            loguniform.rvs(0, 1)
+            if "adam" in config.optimizer
+            else loguniform.rvs(0, 1e-3)
+        )
     # set seed for reproducibility
     seed_everything(config.seed)
     # show nothing in stdout
