@@ -123,7 +123,7 @@ class ImageDataModule(LightningDataModule):
             batch_size=self.config.batch_size,
             shuffle=True,
             num_workers=self.num_workers,
-            pin_memory=True,
+            # pin_memory=True,
         )
 
     def val_dataloader(self):
@@ -132,7 +132,7 @@ class ImageDataModule(LightningDataModule):
             batch_size=self.config.batch_size,
             shuffle=False,
             num_workers=self.num_workers,
-            pin_memory=True,
+            # pin_memory=True,
         )
 
     def test_dataloader(self):
@@ -141,5 +141,5 @@ class ImageDataModule(LightningDataModule):
             batch_size=self.config.batch_size,
             shuffle=False,
             num_workers=self.num_workers,
-            pin_memory=True,
+            # pin_memory=True,
         )
