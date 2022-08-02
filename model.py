@@ -96,7 +96,7 @@ class Model(LightningModule):
             opt = optim.SGD(param_groups, lr=self.config.lr, momentum=0.9)
         elif self.config.optimizer == "adam":
             opt = optim.Adam(param_groups, lr=self.config.lr)
-        sch = optim.lr_scheduler.MultiStepLR(opt, milestones=[30, 60], gamma=0.2)
+        sch = optim.lr_scheduler.MultiStepLR(opt, milestones=[40, 80], gamma=0.2)
         return {
             "optimizer": opt,
             "lr_scheduler": {"scheduler": sch, "interval": "epoch", "frequency": 1},
