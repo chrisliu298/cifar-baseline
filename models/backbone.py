@@ -40,5 +40,5 @@ class CNNBackbone(nn.Module):
         return out
 
 
-def Backbone(num_classes=10):
-    return CNNBackbone(num_classes)
+def Backbone(num_classes=10, hidden_size=64):
+    return CNNBackbone(num_classes, hidden_size)
