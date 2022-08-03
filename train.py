@@ -62,13 +62,13 @@ def main():
         assert config.wd == None
         config.lr = float(
             loguniform.rvs(1e-4, 1e-2)
-            if "adam" in config.optimizer
-            else loguniform.rvs(1e-3, 1e-1)
+            if "ada" in config.optimizer
+            else loguniform.rvs(1e-2, 0.3)
         )
         config.wd = float(
-            loguniform.rvs(1e-4, 1)
-            if "adam" in config.optimizer
-            else loguniform.rvs(1e-6, 1e-2)
+            loguniform.rvs(0.1, 3)
+            if "ada" in config.optimizer
+            else loguniform.rvs(3e-4, 3e-3)
         )
     # show nothing in stdout
     if not config.verbose:
