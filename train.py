@@ -35,8 +35,8 @@ def main():
     )
     parser.add_argument("--data_augmentation", action="store_true")
     parser.add_argument("--subset_size", type=int, default=None)
-    parser.add_argument("--label_noise_type", type=str, choices=["a", "s"])
-    parser.add_argument("--label_noise_level", type=float, default=0.0)
+    parser.add_argument("--noise_type", type=str, choices=["a", "s"])
+    parser.add_argument("--noise_rate", type=float, default=0.0)
     # training
     parser.add_argument(
         "--optimizer", type=str, default="adamw", choices=["adamw", "adam", "sgd"]

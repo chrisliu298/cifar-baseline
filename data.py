@@ -71,19 +71,19 @@ class ImageDataModule(LightningDataModule):
             transform=transforms.Compose(self.transforms_test),
         )
         # add label noise
-        if self.config.label_noise_level:
-            assert self.config.label_noise_type in ["a", "s"]
+        if self.config.noise_rate:
+            assert self.config.noise_type in ["a", "s"]
             label_noise = (
                 self.symmetric_label_noise
-                if self.config.label_noise_type == "s"
+                if self.config.noise_type == "s"
                 else self.asymmetric_label_noise
             )
             train_dataset.targets = label_noise(
-                train_dataset.targets, self.config.label_noise_level
+                train_dataset.targets, self.config.noise_rate
             )
             val_dataset.targets = train_dataset.targets
             # self.test_dataset.targets = label_noise(
-            #     self.test_dataset.targets, self.config.label_noise_level
+            #     self.test_dataset.targets, self.config.noise_rate
             # )
         # split into train and val sets
         indices = np.arange(len(train_dataset))
