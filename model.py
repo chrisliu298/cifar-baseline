@@ -32,7 +32,12 @@ class Model(LightningModule):
         super().__init__()
         self.save_hyperparameters()
         self.config = config
-        self.model = MODELS[self.config.model](num_classes=self.config.num_classes)
+        if isinstance(self.model, Backbone):
+            self.model = MODELS[self.config.model](
+                num_classes=config.num_classes, hidden_size=config.hidden_size
+            )
+        else:
+            self.model = MODELS[self.config.model](num_classes=config.num_classes)
         self.current_epoch_train_acc = None
 
     def forward(self, x):
