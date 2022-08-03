@@ -92,18 +92,19 @@ def main():
     callbacks.append(LearningRateMonitor(logging_interval="epoch"))
     if not config.verbose:
         callbacks.append(TQDMProgressBar(refresh_rate=0))
+    logger = WandbLogger(
+        offline=not config.wandb,
+        project=config.project_id,
+        entity="chrisliu298",
+        config=config,
+    )
     trainer = Trainer(
         gpus=-1,
         callbacks=callbacks,
         max_epochs=config.max_epochs,
         check_val_every_n_epoch=1,
         benchmark=True,
-        logger=WandbLogger(
-            offline=not config.wandb,
-            project=config.project_id,
-            entity="chrisliu298",
-            config=config,
-        ),
+        logger=logger,
         profiler="simple",
     )
     trainer.fit(model=model, datamodule=datamodule)
