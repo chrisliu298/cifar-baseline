@@ -29,7 +29,7 @@ def main():
     parser.add_argument(
         "--model", type=str, default="resnet18", choices=list(MODELS.keys())
     )
-    parser.add_argument("--hidden_dim", type=int, default=64)
+    parser.add_argument("--hidden_size", type=int, default=64)
     # data
     parser.add_argument(
         "--dataset", type=str, default="cifar10", choices=list(DATASETS.keys())
