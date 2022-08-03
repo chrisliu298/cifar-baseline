@@ -45,7 +45,6 @@ def main():
     parser.add_argument("--max_epochs", type=int, default=200)
     parser.add_argument("--lr", type=float)
     parser.add_argument("--wd", type=float)
-    parser.add_argument("--sample_hparams", action="store_true")
     # experiment
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--wandb", action="store_true")
@@ -57,14 +56,13 @@ def main():
     torch.cuda.manual_seed(config.seed)
     # conditional args
     config.num_classes = 10 if config.dataset == "cifar10" else 100
-    if config.sample_hparams:
-        assert config.lr == None
-        assert config.wd == None
+    if config.lr is None:
         config.lr = float(
             loguniform.rvs(1e-4, 1e-2)
             if "ada" in config.optimizer
             else loguniform.rvs(1e-2, 0.3)
         )
+    if config.wd is None:
         config.wd = float(
             loguniform.rvs(0.1, 3)
             if "ada" in config.optimizer
