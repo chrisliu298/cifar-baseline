@@ -64,11 +64,7 @@ def main():
             else loguniform.rvs(1e-2, 0.3)
         )
     if config.wd is None:
-        config.wd = float(
-            loguniform.rvs(0.1, 3)
-            if "ada" in config.optimizer
-            else loguniform.rvs(3e-4, 3e-3)
-        )
+        config.wd = float(loguniform.rvs(3e-4, 3))
     # show nothing in stdout
     if not config.verbose:
         os.environ["WANDB_SILENT"] = "True"
