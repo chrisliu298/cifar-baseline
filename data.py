@@ -9,18 +9,9 @@ from torch.utils.data import DataLoader, Subset
 from torchvision import transforms
 from torchvision.datasets import CIFAR10, CIFAR100
 
+from utils import temp_seed
+
 DATASETS = {"cifar10": CIFAR10, "cifar100": CIFAR100}
-
-
-@contextlib.contextmanager
-def temp_seed(seed):
-    """Used a a context manager to temporarily set the seed of the random number generator."""
-    state = np.random.get_state()
-    np.random.seed(seed)
-    try:
-        yield
-    finally:
-        np.random.set_state(state)
 
 
 class ImageDataModule(LightningDataModule):
@@ -29,11 +20,11 @@ class ImageDataModule(LightningDataModule):
         self.config = config
         self.num_workers = os.cpu_count()
         # calculate mean and std
-        train_dataset = DATASETS[self.config.dataset](
+        train_images = DATASETS[self.config.dataset](
             "/tmp/data", train=True, download=True
-        )
-        means = (np.mean(train_dataset.data, axis=(0, 1, 2)) / 255).round(4).tolist()
-        stds = (np.std(train_dataset.data, axis=(0, 1, 2)) / 255).round(4).tolist()
+        ).data
+        means = (np.mean(train_images, axis=(0, 1, 2)) / 255).round(4).tolist()
+        stds = (np.std(train_images, axis=(0, 1, 2)) / 255).round(4).tolist()
         # define transforms
         self.transforms_train = []
         self.transforms_test = []
@@ -50,26 +41,30 @@ class ImageDataModule(LightningDataModule):
     def prepare_data(self):
         # download data
         # we do not care about assignment here, which will be handled b setup()
-        DATASETS[self.config.dataset]("/tmp/data", train=True, download=True)
-        DATASETS[self.config.dataset]("/tmp/data", train=False, download=True)
+        with open(os.devnull, "w") as devnull:
+            with contextlib.redirect_stdout(devnull):
+                DATASETS[self.config.dataset]("/tmp/data", train=True, download=True)
+                DATASETS[self.config.dataset]("/tmp/data", train=False, download=True)
 
     @temp_seed(42)
     def setup(self, stage=None):
-        train_dataset = DATASETS[self.config.dataset](
-            "/tmp/data",
-            train=True,
-            transform=transforms.Compose(self.transforms_train),
-        )
-        val_dataset = DATASETS[self.config.dataset](
-            "/tmp/data",
-            train=True,
-            transform=transforms.Compose(self.transforms_test),
-        )
-        self.test_dataset = DATASETS[self.config.dataset](
-            "/tmp/data",
-            train=False,
-            transform=transforms.Compose(self.transforms_test),
-        )
+        with open(os.devnull, "w") as devnull:
+            with contextlib.redirect_stdout(devnull):
+                train_dataset = DATASETS[self.config.dataset](
+                    "/tmp/data",
+                    train=True,
+                    transform=transforms.Compose(self.transforms_train),
+                )
+                val_dataset = DATASETS[self.config.dataset](
+                    "/tmp/data",
+                    train=True,
+                    transform=transforms.Compose(self.transforms_test),
+                )
+                self.test_dataset = DATASETS[self.config.dataset](
+                    "/tmp/data",
+                    train=False,
+                    transform=transforms.Compose(self.transforms_test),
+                )
         # add label noise
         if self.config.noise_rate:
             assert self.config.noise_type in ["a", "s"]

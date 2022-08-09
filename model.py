@@ -19,11 +19,6 @@ MODELS = {
     "preact-resnet50": PreActResNet50,
     "preact-resnet101": PreActResNet101,
     "preact-resnet152": PreActResNet152,
-    "resnext29-2x64d": ResNeXt29_2x64d,
-    "resnext29-4x64d": ResNeXt29_4x64d,
-    "resnext29-8x64d": ResNeXt29_8x64d,
-    "resnext29-32x4d": ResNeXt29_32x4d,
-    "wideresnet": WideResNet,
 }
 
 
@@ -32,12 +27,9 @@ class Model(LightningModule):
         super().__init__()
         self.save_hyperparameters()
         self.config = config
-        if config.model == "backbone":
-            self.model = MODELS[config.model](
-                num_classes=config.num_classes, hidden_size=config.hidden_size
-            )
-        else:
-            self.model = MODELS[config.model](num_classes=config.num_classes)
+        self.model = MODELS[config.model](
+            num_classes=config.num_classes, width_factor=config.width_factor
+        )
         self.current_epoch_train_acc = None
 
     def forward(self, x):
