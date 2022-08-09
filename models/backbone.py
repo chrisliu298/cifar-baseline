@@ -20,9 +20,9 @@ class BasicBlock(nn.Module):
 
 
 class CNNBackbone(nn.Module):
-    def __init__(self, num_classes=10, hidden_size=64):
+    def __init__(self, num_classes=10, width_factor=64):
         super().__init__()
-        self.channels = [3] + [hidden_size * i for i in [1, 2, 4, 8]]
+        self.channels = [3] + [width_factor * i for i in [1, 2, 4, 8]]
         self.num_classes = num_classes
         self.layer0 = BasicBlock(self.channels[0], self.channels[1], block_idx=0)
         self.layer1 = BasicBlock(self.channels[1], self.channels[2], block_idx=1)
@@ -40,5 +40,5 @@ class CNNBackbone(nn.Module):
         return out
 
 
-def Backbone(num_classes=10, hidden_size=64):
-    return CNNBackbone(num_classes, hidden_size)
+def Backbone(num_classes=10, width_factor=64):
+    return CNNBackbone(num_classes, width_factor)
