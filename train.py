@@ -94,7 +94,8 @@ def main():
         config=config,
     )
     trainer = Trainer(
-        gpus=-1,
+        accelerator="gpu",
+        devices=-1,
         callbacks=callbacks,
         max_epochs=config.max_epochs,
         check_val_every_n_epoch=1,
