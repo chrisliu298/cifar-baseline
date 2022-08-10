@@ -66,6 +66,9 @@ class Model(LightningModule):
         self.log("avg_train_acc", acc, logger=True, prog_bar=True)
         self.log("avg_train_loss", loss, logger=True)
         self.current_epoch_train_acc = acc
+        # log entire model l2 norm
+        model_norm = self.get_model_norm().item()
+        self.log("model_norm", model_norm, logger=True)
 
     def validation_step(self, batch, batch_idx):
         loss, acc = self.evaluate(batch, "val")
@@ -109,6 +112,13 @@ class Model(LightningModule):
             "optimizer": opt,
             "lr_scheduler": {"scheduler": sch, "interval": "epoch", "frequency": 1},
         }
+
+    @torch.no_grad()
+    def get_model_norm(self):
+        weights = []
+        for param in self.model.parameters():
+            weights.append(param.flatten())
+        return torch.norm(torch.cat(weights), p=2)
 
     # def configure_parameter_groups(self, model):
     #     """
