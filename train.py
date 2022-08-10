@@ -64,7 +64,7 @@ def main():
             else loguniform.rvs(1e-2, 0.3)
         )
     if config.wd is None:
-        config.wd = float(loguniform.rvs(3e-4, 3))
+        config.wd = float(loguniform.rvs(1e-4, 10))
     # show nothing in stdout
     if not config.verbose:
         os.environ["WANDB_SILENT"] = "True"
