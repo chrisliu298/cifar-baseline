@@ -106,7 +106,7 @@ class Model(LightningModule):
         elif self.config.optimizer == "adam":
             opt = optim.Adam(param_groups, lr=self.config.lr)
 
-        milestones = [40, 80]
+        milestones = [40, 80] if self.config.max_epochs < 200 else [60, 120, 160]
         sch = optim.lr_scheduler.MultiStepLR(opt, milestones=milestones, gamma=0.2)
         return {
             "optimizer": opt,
