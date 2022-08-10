@@ -1,13 +1,6 @@
 from contextlib import contextmanager
-from time import perf_counter
 
 import numpy as np
-
-
-@contextmanager
-def timer() -> float:
-    start = perf_counter()
-    yield lambda: perf_counter() - start
 
 
 @contextmanager
